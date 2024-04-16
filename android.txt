@@ -1,0 +1,4096 @@
+------------------------------------------------slip 1---------------------------------------------------------------------------
+1.  Create a Simple Application which shows the Life Cycle of Activity. 
+
+
+public class MainActivity extends Activity {
+
+  private static final String TAG = "LifecycleDemo";
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+    Log.d(TAG, "onCreate invoked");
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    Log.d(TAG, "onStart invoked");
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    Log.d(TAG, "onResume invoked");
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    Log.d(TAG, "onPause invoked");
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    Log.d(TAG, "onStop invoked");
+  }
+
+  @Override
+  protected void onRestart() {
+    super.onRestart();
+    Log.d(TAG, "onRestart invoked");
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    Log.d(TAG, "onDestroy invoked");
+  }
+}
+
+
+2.. Create an Android Application that demonstrate DatePicker and DatePickerDailog.
+
+XML   
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btnPickDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick Date"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>
+
+
+Java 
+
+import android.app.DatePickerDialog;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.Calendar;
+
+public class MainActivity extends AppCompatActivity {
+
+    private Button btnPickDate;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        btnPickDate = findViewById(R.id.btnPickDate);
+        btnPickDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+    }
+
+    private void showDatePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        String selectedDate = dayOfMonth + "/" + (month + 1) + "/" + year;
+                        Toast.makeText(MainActivity.this, "Selected Date: " + selectedDate, Toast.LENGTH_SHORT).show();
+                    }
+                }, year, month, day);
+
+        datePickerDialog.show();
+    }
+}
+
+------------------------------------------------------------slip2---------------------------------------------------------------------
+
+1.Q1. Create a Simple Application, which reads a positive number from the user and display its factorial value in another activity. 
+
+// activity_main.xml (Layout file for the main activity):
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editTextNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Enter a positive number"
+        android:layout_centerInParent="true"
+        android:inputType="number"/>
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calculate Factorial"
+        android:layout_below="@id/editTextNumber"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
+
+</RelativeLayout>
+
+// MainActivity.java:
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextNumber;
+    private Button buttonCalculate;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextNumber = findViewById(R.id.editTextNumber);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateFactorial();
+            }
+        });
+    }
+
+    private void calculateFactorial() {
+        String numberString = editTextNumber.getText().toString();
+        if (!numberString.isEmpty()) {
+            int number = Integer.parseInt(numberString);
+            if (number >= 0) {
+                long factorial = calculateFactorial(number);
+                Intent intent = new Intent(MainActivity.this, FactorialResultActivity.class);
+                intent.putExtra("factorial", factorial);
+                startActivity(intent);
+            }
+        }
+    }
+
+    private long calculateFactorial(int number) {
+        long factorial = 1;
+        for (int i = 1; i <= number; i++) {
+            factorial *= i;
+        }
+        return factorial;
+    }
+}
+
+// FactorialResultActivity.java:
+
+import android.os.Bundle;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class FactorialResultActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_factorial_result);
+
+        TextView textViewResult = findViewById(R.id.textViewResult);
+
+        long factorial = getIntent().getLongExtra("factorial", 0);
+        textViewResult.setText("Factorial: " + factorial);
+    }
+}
+
+
+// activity_factorial_result.xml (Layout file for the result activity):
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FactorialResultActivity">
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>
+
+
+-- Q2. Create an Android Application to display satellite view of current location using Google Map.
+
+// Create a Service for audio playback (AudioService.java):
+
+import android.app.Service;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.IBinder;
+
+public class AudioService extends Service {
+
+    private MediaPlayer mediaPlayer;
+
+    public AudioService() {
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        mediaPlayer = MediaPlayer.create(this, R.raw.song);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        }
+    }
+}
+
+
+// Create an Activity to control the Service (MainActivity.java):
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private Button btnStart, btnStop;
+    private Intent audioServiceIntent;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        btnStart = findViewById(R.id.btnStart);
+        btnStop = findViewById(R.id.btnStop);
+
+        audioServiceIntent = new Intent(this, AudioService.class);
+
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startService(audioServiceIntent);
+            }
+        });
+
+        btnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopService(audioServiceIntent);
+            }
+        });
+    }
+}
+
+// Create the layout for your MainActivity (activity_main.xml):
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Audio" />
+
+    <Button
+        android:id="@+id/btnStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnStart"
+        android:layout_marginTop="20dp"
+        android:text="Stop Audio" />
+
+</RelativeLayout>
+
+//Declare the Service in the AndroidManifest.xml file:
+
+<service android:name=".AudioService" />
+
+-------------------------------------------------------slip3------------------------------------------------------------------
+
+Q1. Create an Android Application that will change color of the College Name on click ofPush Button and change the font size, font style of text view using xml
+
+// Create your layout file (activity_main.xml):
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textViewCollegeName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="College Name"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/buttonChangeColorAndFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change Color & Font"
+        android:layout_below="@id/textViewCollegeName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+</RelativeLayout>
+
+
+// In your MainActivity.java, set up the onClickListener for the button to change the color and font:
+
+import android.graphics.Color;
+import android.graphics.Typeface;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView textViewCollegeName;
+    private Button buttonChangeColorAndFont;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textViewCollegeName = findViewById(R.id.textViewCollegeName);
+        buttonChangeColorAndFont = findViewById(R.id.buttonChangeColorAndFont);
+
+        buttonChangeColorAndFont.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Change color to blue
+                textViewCollegeName.setTextColor(Color.BLUE);
+                // Change font size to 30sp
+                textViewCollegeName.setTextSize(30);
+                // Change font style to italic
+                textViewCollegeName.setTypeface(null, Typeface.ITALIC);
+            }
+        });
+    }
+}
+
+
+
+2.Create an Android Application to find the factorial of a number and Display the Resulton
+Alert Box.
+
+// Create your layout file (activity_main.xml):
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editTextNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Enter a number"
+        android:inputType="number"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/buttonCalculateFactorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calculate Factorial"
+        android:layout_below="@id/editTextNumber"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
+
+</RelativeLayout>
+
+
+// In your MainActivity.java, calculate the factorial and display the result on an alert dialog:
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextNumber;
+    private Button buttonCalculateFactorial;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextNumber = findViewById(R.id.editTextNumber);
+        buttonCalculateFactorial = findViewById(R.id.buttonCalculateFactorial);
+
+        buttonCalculateFactorial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateFactorial();
+            }
+        });
+    }
+
+    private void calculateFactorial() {
+        String numberString = editTextNumber.getText().toString();
+        if (!numberString.isEmpty()) {
+            int number = Integer.parseInt(numberString);
+            long factorial = calculateFactorial(number);
+            displayFactorialResult(factorial);
+        }
+    }
+
+    private long calculateFactorial(int number) {
+        long factorial = 1;
+        for (int i = 1; i <= number; i++) {
+            factorial *= i;
+        }
+        return factorial;
+    }
+
+    private void displayFactorialResult(long factorial) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Factorial Result");
+        builder.setMessage("The factorial of the number is: " + factorial);
+        builder.setPositiveButton("OK", null);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+}
+
+-------------------------------------------------------------slip4-----------------------------------------------------------
+
+Q1. Create a Simple Application, that performs Arithmetic Operations. (Use constraint layout)
+
+// Create your layout file (activity_main.xml): 
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editTextNumber1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="Enter number 1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextNumber2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="Enter number 2"
+        app:layout_constraintTop_toBottomOf="@id/editTextNumber1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"/>
+
+    <Button
+        android:id="@+id/buttonAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        app:layout_constraintTop_toBottomOf="@id/editTextNumber2"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp"/>
+
+    <Button
+        android:id="@+id/buttonSubtract"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Subtract"
+        app:layout_constraintTop_toBottomOf="@id/editTextNumber2"
+        app:layout_constraintStart_toEndOf="@id/buttonAdd"
+        android:layout_margin="16dp"/>
+
+    <Button
+        android:id="@+id/buttonMultiply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Multiply"
+        app:layout_constraintTop_toBottomOf="@id/buttonAdd"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp"/>
+
+    <Button
+        android:id="@+id/buttonDivide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Divide"
+        app:layout_constraintTop_toBottomOf="@id/buttonAdd"
+        app:layout_constraintStart_toEndOf="@id/buttonMultiply"
+        android:layout_margin="16dp"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Result: "
+        app:layout_constraintTop_toBottomOf="@id/buttonMultiply"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="32dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+// In your MainActivity.java, implement the arithmetic operations:
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextNumber1, editTextNumber2;
+    private Button buttonAdd, buttonSubtract, buttonMultiply, buttonDivide;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextNumber1 = findViewById(R.id.editTextNumber1);
+        editTextNumber2 = findViewById(R.id.editTextNumber2);
+        buttonAdd = findViewById(R.id.buttonAdd);
+        buttonSubtract = findViewById(R.id.buttonSubtract);
+        buttonMultiply = findViewById(R.id.buttonMultiply);
+        buttonDivide = findViewById(R.id.buttonDivide);
+        textViewResult = findViewById(R.id.textViewResult);
+
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performOperation('+');
+            }
+        });
+
+        buttonSubtract.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performOperation('-');
+            }
+        });
+
+        buttonMultiply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performOperation('*');
+            }
+        });
+
+        buttonDivide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performOperation('/');
+            }
+        });
+    }
+
+    private void performOperation(char operator) {
+        double num1 = Double.parseDouble(editTextNumber1.getText().toString());
+        double num2 = Double.parseDouble(editTextNumber2.getText().toString());
+        double result = 0;
+
+        switch (operator) {
+            case '+':
+                result = num1 + num2;
+                break;
+            case '-':
+                result = num1 - num2;
+                break;
+            case '*':
+                result = num1 * num2;
+                break;
+            case '/':
+                if (num2 != 0) {
+                    result = num1 / num2;
+                } else {
+                    textViewResult.setText("Cannot divide by zero");
+                    return;
+                }
+                break;
+        }
+
+        textViewResult.setText("Result: " + result);
+    }
+}
+
+
+
+Q2. Create an Android Application that sends the Notification on click of the button and displays the notification message on the second activity. 
+
+//Layout file for the main activity (activity_main.xml):
+
+<Button
+    android:id="@+id/buttonSendNotification"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Send Notification"
+    android:onClick="sendNotification" />
+
+//Layout file for the second activity (activity_second.xml):
+
+<TextView
+    android:id="@+id/textViewNotificationMessage"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Notification Message"
+    android:textSize="24sp"
+    android:gravity="center"
+    android:layout_gravity="center" />
+
+//Code for the main activity (MainActivity.java):
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.view.View;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final String CHANNEL_ID = "my_channel";
+    private static final int NOTIFICATION_ID = 1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        createNotificationChannel();
+    }
+
+    public void sendNotification(View view) {
+        Intent intent = new Intent(this, SecondActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("My Notification")
+                .setContentText("This is a notification message")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+}
+
+
+//Code for the second activity (SecondActivity.java):
+
+
+import android.os.Bundle;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class SecondActivity extends AppCompatActivity {
+
+    private TextView textViewNotificationMessage;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_second);
+
+        textViewNotificationMessage = findViewById(R.id.textViewNotificationMessage);
+
+        // Get the notification message from the intent
+        String message = getIntent().getStringExtra("message");
+        textViewNotificationMessage.setText(message);
+    }
+}
+
+
+-----------------------------------------------------------------slip5------------------------------------------------------------
+
+Q1. Create an Android Application to accept two numbers and find power and Average. Display the result on the next activity on Button click.
+
+// Layout file for the main activity (activity_main.xml):
+
+<EditText
+    android:id="@+id/editTextNumber1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="Enter number 1"
+    android:inputType="numberDecimal"/>
+
+<EditText
+    android:id="@+id/editTextNumber2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="Enter number 2"
+    android:inputType="numberDecimal"/>
+
+<Button
+    android:id="@+id/buttonCalculate"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Calculate"
+    android:onClick="calculate"/>
+
+
+//Layout file for the result activity (activity_result.xml):
+
+<TextView
+    android:id="@+id/textViewPower"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Power: " />
+
+<TextView
+    android:id="@+id/textViewAverage"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Average: " />
+
+//Code for the main activity (MainActivity.java):
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextNumber1, editTextNumber2;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextNumber1 = findViewById(R.id.editTextNumber1);
+        editTextNumber2 = findViewById(R.id.editTextNumber2);
+    }
+
+    public void calculate(View view) {
+        double number1 = Double.parseDouble(editTextNumber1.getText().toString());
+        double number2 = Double.parseDouble(editTextNumber2.getText().toString());
+
+        double power = Math.pow(number1, number2);
+        double average = (number1 + number2) / 2;
+
+        Intent intent = new Intent(this, ResultActivity.class);
+        intent.putExtra("power", power);
+        intent.putExtra("average", average);
+        startActivity(intent);
+    }
+}
+
+//Code for the result activity (ResultActivity.java):
+
+import android.os.Bundle;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class ResultActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_result);
+
+        TextView textViewPower = findViewById(R.id.textViewPower);
+        TextView textViewAverage = findViewById(R.id.textViewAverage);
+
+        double power = getIntent().getDoubleExtra("power", 0);
+        double average = getIntent().getDoubleExtra("average", 0);
+
+        textViewPower.setText("Power: " + power);
+        textViewAverage.setText("Average: " + average);
+    }
+}
+
+
+Q2. Create an Android application that creates a custom Alert Dialog containing Friends Name and onClick of Friend Name Button greet accordingly. 
+
+// Create layout file for the custom AlertDialog (dialog_friends.xml):
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/buttonFriend1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Friend 1" />
+
+    <Button
+        android:id="@+id/buttonFriend2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Friend 2" />
+
+    <Button
+        android:id="@+id/buttonFriend3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Friend 3" />
+</LinearLayout>
+
+// Code for showing the custom AlertDialog in the main activity (MainActivity.java):
+
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button buttonShowDialog = findViewById(R.id.buttonShowDialog);
+        buttonShowDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCustomDialog();
+            }
+        });
+    }
+
+    private void showCustomDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_friends, null);
+        builder.setView(dialogView);
+
+        Button buttonFriend1 = dialogView.findViewById(R.id.buttonFriend1);
+        Button buttonFriend2 = dialogView.findViewById(R.id.buttonFriend2);
+        Button buttonFriend3 = dialogView.findViewById(R.id.buttonFriend3);
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+        buttonFriend1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                greetFriend("Friend 1");
+                alertDialog.dismiss();
+            }
+        });
+
+        buttonFriend2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                greetFriend("Friend 2");
+                alertDialog.dismiss();
+            }
+        });
+
+        buttonFriend3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                greetFriend("Friend 3");
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+    private void greetFriend(String friendName) {
+        // Replace this with your own greeting logic
+        String greetingMessage = "Hello, " + friendName + "!";
+        // You can display the greeting message as you like, for example, in a Toast
+        Toast.makeText(this, greetingMessage, Toast.LENGTH_SHORT).show();
+    }
+}
+
+---------------------------------------------------------------slip 6------------------------------------------------
+
+Q1. Create a Simple Application Which Send ―Hello! message from one activity to anotherwith help of Button (Use Intent). 
+
+// Create layout file for the first activity (activity_main.xml):
+
+<Button
+    android:id="@+id/buttonSendMessage"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Send Message"
+    android:onClick="sendMessage"/>
+
+
+//Create layout file for the second activity (activity_display_message.xml):
+
+<TextView
+    android:id="@+id/textViewMessage"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Message will be displayed here"
+    android:textSize="20sp"
+    android:gravity="center"
+    android:layout_gravity="center"/>
+
+
+//Code for the first activity (MainActivity.java):
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    public void sendMessage(View view) {
+        // Create an Intent to start the DisplayMessageActivity
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        // Add extra data (message) to the Intent
+        intent.putExtra("message", "Hello!");
+        // Start the second activity
+        startActivity(intent);
+    }
+}
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    public void sendMessage(View view) {
+        // Create an Intent to start the DisplayMessageActivity
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        // Add extra data (message) to the Intent
+        intent.putExtra("message", "Hello!");
+        // Start the second activity
+        startActivity(intent);
+    }
+}
+
+
+//Code for the second activity (DisplayMessageActivity.java):
+
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class DisplayMessageActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_display_message);
+
+        // Get the Intent that started this activity and extract the message
+        Intent intent = getIntent();
+        String message = intent.getStringExtra("message");
+
+        // Set the message in the TextView
+        TextView textViewMessage = findViewById(R.id.textViewMessage);
+        textViewMessage.setText(message);
+    }
+}
+
+Q2. Create an Android Application that Demonstrates ListView and Onclick of List Displaythe Toast.
+
+//Create layout file for the activity containing the ListView (activity_main.xml):
+
+<ListView
+    android:id="@+id/listView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+
+//Create layout file for the list item (list_item.xml):
+
+<TextView
+    android:id="@+id/textViewListItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:textSize="18sp" />
+
+//Code for the MainActivity.java:
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private ListView listView;
+    private String[] items = {"Item 1", "Item 2", "Item 3", "Item 4", "Item 5"};
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        listView = findViewById(R.id.listView);
+
+        // Create an ArrayAdapter to populate the ListView
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                R.layout.list_item, items);
+
+        // Set the adapter to the ListView
+        listView.setAdapter(adapter);
+
+        // Set up an OnClickListener for the ListView
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Get the clicked item
+                String selectedItem = (String) parent.getItemAtPosition(position);
+                // Display a Toast with the clicked item
+                Toast.makeText(MainActivity.this, "Clicked: " + selectedItem,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+}
+
+
+----------------------------------------------------------------slip 7-------------------------------------------------------
+
+Q1. Create an Android Application that Demonstrate Radio Button. 
+
+//activity_main.xml
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioButtonOption1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Option 1" />
+
+        <RadioButton
+            android:id="@+id/radioButtonOption2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Option 2" />
+
+        <RadioButton
+            android:id="@+id/radioButtonOption3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Option 3" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/buttonShowSelection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Selection"
+        android:layout_marginTop="16dp"
+        android:onClick="showSelection"/>
+</LinearLayout>
+
+
+// MainActivity.java 
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private RadioGroup radioGroup;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        radioGroup = findViewById(R.id.radioGroup);
+    }
+
+    public void showSelection(View view) {
+        int selectedId = radioGroup.getCheckedRadioButtonId();
+
+        if (selectedId != -1) {
+            RadioButton radioButton = findViewById(selectedId);
+            String selectedOption = radioButton.getText().toString();
+            Toast.makeText(this, "Selected Option: " + selectedOption, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Please select an option", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+Q2. Write an android code to turn ON /OFF the Wi-Fi
+
+// Add necessary permissions in the AndroidManifest.xml file: 
+
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+// Create layout file for the activity (activity_main.xml):
+
+<Button
+    android:id="@+id/buttonToggleWifi"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Toggle Wi-Fi"
+    android:onClick="toggleWifi"/>
+
+// Code for handling Wi-Fi toggle (MainActivity.java):
+
+import android.content.Context;
+import android.net.wifi.WifiManager;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private Button buttonToggleWifi;
+    private WifiManager wifiManager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        buttonToggleWifi = findViewById(R.id.buttonToggleWifi);
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        updateButtonState(); // Update button text based on Wi-Fi state
+    }
+
+    public void toggleWifi(View view) {
+        if (wifiManager.isWifiEnabled()) {
+            // Wi-Fi is enabled, so disable it
+            wifiManager.setWifiEnabled(false);
+        } else {
+            // Wi-Fi is disabled, so enable it
+            wifiManager.setWifiEnabled(true);
+        }
+
+        updateButtonState(); // Update button text after toggling Wi-Fi state
+    }
+
+    private void updateButtonState() {
+        if (wifiManager.isWifiEnabled()) {
+            buttonToggleWifi.setText("Turn OFF Wi-Fi");
+        } else {
+            buttonToggleWifi.setText("Turn ON Wi-Fi");
+        }
+    }
+}
+
+
+--------------------------------------------------slip 8----------------------------------------------------------------------
+
+Q1. Create an Android App with Login Screen. On successful login, gives message go to next Activity (Without Using Database& use Table Layout).
+
+// Create layout file for the login screen (activity_login.xml):
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:layout_margin="16dp">
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username:"
+                android:textStyle="bold"/>
+            <EditText
+                android:id="@+id/editTextUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter username"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password:"
+                android:textStyle="bold"/>
+            <EditText
+                android:id="@+id/editTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="Enter password"/>
+        </TableRow>
+
+        <TableRow>
+            <Button
+                android:id="@+id/buttonLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:onClick="login"/>
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>
+
+// Code for handling login logic in MainActivity.java: 
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextUsername, editTextPassword;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        editTextUsername = findViewById(R.id.editTextUsername);
+        editTextPassword = findViewById(R.id.editTextPassword);
+    }
+
+    public void login(View view) {
+        String username = editTextUsername.getText().toString();
+        String password = editTextPassword.getText().toString();
+
+        // Check if username and password match a hardcoded value
+        if (username.equals("user") && password.equals("password")) {
+            // If login is successful, navigate to the next activity
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            startActivity(intent);
+        } else {
+            // If login fails, show a toast message
+            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+
+// Create layout file for the welcome activity (activity_welcome.xml):
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Welcome!"
+    android:textSize="24sp"
+    android:layout_gravity="center"/>
+
+// Code for the WelcomeActivity.java:
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class WelcomeActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_welcome);
+    }
+}
+
+
+Q2. Create an android application to demonstrate how to use a service to download a file fromthe Internet on click of Download Button. Once done, the service notifies the activity via a broadcast receiver that the download is complete.
+
+// Create layout file for the main activity (activity_main.xml):
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/buttonDownload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Download File"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/textViewStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonDownload"
+        android:layout_marginTop="16dp"
+        android:text="Status: "
+        android:textStyle="bold"/>
+
+</RelativeLayout>
+
+
+// Implement the service (DownloadService.java): 
+
+import android.app.IntentService;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class DownloadService extends IntentService {
+
+    public DownloadService() {
+        super("DownloadService");
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        String fileUrl = intent.getStringExtra("fileUrl");
+
+        try {
+            // Create URL object
+            URL url = new URL(fileUrl);
+
+            // Open connection
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.connect();
+
+            // Download the file
+            InputStream input = new BufferedInputStream(url.openStream());
+            FileOutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + "/downloaded_file.jpg");
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = input.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+
+            // Close streams
+            output.flush();
+            output.close();
+            input.close();
+
+            // Send broadcast to notify activity that download is complete
+            Intent broadcastIntent = new Intent("DOWNLOAD_COMPLETE");
+            sendBroadcast(broadcastIntent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+// Implement the main activity (MainActivity.java):
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView textViewStatus;
+    private BroadcastReceiver broadcastReceiver;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textViewStatus = findViewById(R.id.textViewStatus);
+        Button buttonDownload = findViewById(R.id.buttonDownload);
+
+        buttonDownload.setOnClickListener(v -> {
+            // Start the download service
+            Intent intent = new Intent(MainActivity.this, DownloadService.class);
+            intent.putExtra("fileUrl", "URL_OF_YOUR_FILE_TO_DOWNLOAD");
+            startService(intent);
+        });
+
+        // Register broadcast receiver to receive notification from the service
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Update UI to indicate download completion
+                textViewStatus.setText("Status: Download complete");
+            }
+        };
+
+        registerReceiver(broadcastReceiver, new IntentFilter("DOWNLOAD_COMPLETE"));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister the broadcast receiver
+        unregisterReceiver(broadcastReceiver);
+    }
+}
+
+
+----------------------------------------------------------------slip 9--------------------------------------------------------------------
+
+Q1. Write an Android application to accept two numbers from the user, and display them, but reject input if both numbers are greater than 10 and asks for two new numbers.
+
+//Create layout file for the main activity (activity_main.xml):
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextNumber1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter first number"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextNumber2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextNumber1"
+        android:hint="Enter second number"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/buttonSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextNumber2"
+        android:layout_centerHorizontal="true"
+        android:text="Submit"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonSubmit"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text=""
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+</RelativeLayout>
+
+
+// Implement logic in the main activity (MainActivity.java):
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText editTextNumber1, editTextNumber2;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextNumber1 = findViewById(R.id.editTextNumber1);
+        editTextNumber2 = findViewById(R.id.editTextNumber2);
+        textViewResult = findViewById(R.id.textViewResult);
+    }
+
+    public void submit(View view) {
+        // Get numbers from EditText fields
+        double number1 = Double.parseDouble(editTextNumber1.getText().toString());
+        double number2 = Double.parseDouble(editTextNumber2.getText().toString());
+
+        // Check if both numbers are greater than 10
+        if (number1 > 10 && number2 > 10) {
+            // Display error message
+            textViewResult.setText("Both numbers should not be greater than 10. Please enter new numbers.");
+            // Clear EditText fields
+            editTextNumber1.setText("");
+            editTextNumber2.setText("");
+        } else {
+            // Display the entered numbers
+            textViewResult.setText("Number 1: " + number1 + "\nNumber 2: " + number2);
+        }
+    }
+}
+
+
+Q2. Create table Company (id, name, address, phno). Create Application for Performing the following operation on the table.
+a) Insert New Company details.
+b) Show All Company details
+
+// Company.java:
+
+public class Company {
+    private int id;
+    private String name;
+    private String address;
+    private String phoneNumber;
+
+    public Company(int id, String name, String address, String phoneNumber) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+}
+
+
+// MainActivity.java:
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    private List<Company> companyList = new ArrayList<>();
+    private EditText editTextId, editTextName, editTextAddress, editTextPhoneNumber;
+    private TextView textViewCompanyDetails;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextId = findViewById(R.id.editTextId);
+        editTextName = findViewById(R.id.editTextName);
+        editTextAddress = findViewById(R.id.editTextAddress);
+        editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
+        textViewCompanyDetails = findViewById(R.id.textViewCompanyDetails);
+    }
+
+    public void addCompany(View view) {
+        int id = Integer.parseInt(editTextId.getText().toString());
+        String name = editTextName.getText().toString();
+        String address = editTextAddress.getText().toString();
+        String phoneNumber = editTextPhoneNumber.getText().toString();
+
+        Company company = new Company(id, name, address, phoneNumber);
+        companyList.add(company);
+
+        // Clear input fields
+        editTextId.setText("");
+        editTextName.setText("");
+        editTextAddress.setText("");
+        editTextPhoneNumber.setText("");
+
+        textViewCompanyDetails.setText(""); // Clear previous details
+    }
+
+    public void showAllCompanies(View view) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Company company : companyList) {
+            stringBuilder.append("ID: ").append(company.getId()).append("\n");
+            stringBuilder.append("Name: ").append(company.getName()).append("\n");
+            stringBuilder.append("Address: ").append(company.getAddress()).append("\n");
+            stringBuilder.append("Phone Number: ").append(company.getPhoneNumber()).append("\n\n");
+        }
+        textViewCompanyDetails.setText(stringBuilder.toString());
+    }
+}
+
+
+// activity_main.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter ID"
+        android:inputType="number"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextId"
+        android:hint="Enter Name"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextName"
+        android:hint="Enter Address"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/editTextPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextAddress"
+        android:hint="Enter Phone Number"
+        android:inputType="phone"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/buttonAddCompany"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextPhoneNumber"
+        android:layout_centerHorizontal="true"
+        android:text="Add Company"
+        android:onClick="addCompany"/>
+
+    <Button
+        android:id="@+id/buttonShowCompanies"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonAddCompany"
+        android:layout_centerHorizontal="true"
+        android:text="Show All Companies"
+        android:onClick="showAllCompanies"/>
+
+    <TextView
+        android:id="@+id/textViewCompanyDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonShowCompanies"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text=""
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+
+</RelativeLayout>
+
+-------------------------------------------------------slip 10-------------------------------------------------------------------------
+
+Q1. Create an Android Application that Demonstrate Switch and Toggle Button. 
+
+// MainActivity.java:
+
+import android.os.Bundle;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Switch switchButton = findViewById(R.id.switchButton);
+        switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(MainActivity.this, "Switch is ON", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Switch is OFF", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        ToggleButton toggleButton = findViewById(R.id.toggleButton);
+        toggleButton.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
+            @Override
+            public void onToggle(boolean on) {
+                if (on) {
+                    Toast.makeText(MainActivity.this, "Toggle Button is ON", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Toggle Button is OFF", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+}
+
+
+// activity_main.xml:
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <Switch
+        android:id="@+id/switchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Switch"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"/>
+
+    <com.example.togglebutton.ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Toggle Button"
+        android:layout_below="@id/switchButton"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>
+
+// ToggleButton.java:
+
+package com.example.togglebutton;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import androidx.appcompat.widget.AppCompatToggleButton;
+
+public class ToggleButton extends AppCompatToggleButton {
+
+    public interface OnToggleChanged {
+        void onToggle(boolean on);
+    }
+
+    private OnToggleChanged listener;
+
+    public ToggleButton(Context context) {
+        super(context);
+        init();
+    }
+
+    public ToggleButton(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public ToggleButton(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (listener != null) {
+                    listener.onToggle(isChecked);
+                }
+            }
+        });
+    }
+
+    public void setOnToggleChanged(OnToggleChanged listener) {
+        this.listener = listener;
+    }
+}
+
+
+
+Q2. Create a fragment that has its own UI and enable your activities to communicate withfragments. 
+
+// FragmentA.java:
+
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+public class FragmentA extends Fragment {
+
+    private OnButtonClickListener mListener;
+
+    public interface OnButtonClickListener {
+        void onButtonClick(String message);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (OnButtonClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnButtonClickListener");
+        }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_a, container, false);
+        Button button = view.findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.onButtonClick("Hello from Fragment A!");
+                }
+            }
+        });
+        return view;
+    }
+}
+
+
+// activity_main.xml: 
+
+<fragment
+    android:id="@+id/fragmentA"
+    android:name="com.example.fragmentcommunication.FragmentA"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/fragment_container"/>
+
+// MainActivity.java:
+
+import android.os.Bundle;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity implements FragmentA.OnButtonClickListener {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    @Override
+    public void onButtonClick(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+}
+
+
+// fragment_a.xml:
+
+<Button
+    android:id="@+id/button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Click Me"
+    android:layout_gravity="center"/>
+
+
+----------------------------------------------------------------slip 11-----------------------------------------------------------------
+
+Q.1 Create android application to change Font Size, Color and Font Family of String.
+
+// (activity_main.xml):
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello, World!"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:layout_centerInParent="true"/>
+
+    <SeekBar
+        android:id="@+id/fontSizeSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="50"
+        android:progress="20"
+        android:layout_below="@id/textView"
+        android:layout_marginTop="16dp"/>
+
+    <SeekBar
+        android:id="@+id/fontColorSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255"
+        android:layout_below="@id/fontSizeSeekBar"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Add controls for font family selection -->
+
+</RelativeLayout>
+
+
+// (MainActivity.java)
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView textView;
+    private SeekBar fontSizeSeekBar;
+    private SeekBar fontColorSeekBar;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textView = findViewById(R.id.textView);
+        fontSizeSeekBar = findViewById(R.id.fontSizeSeekBar);
+        fontColorSeekBar = findViewById(R.id.fontColorSeekBar);
+
+        // Font size SeekBar listener
+        fontSizeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textView.setTextSize(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        // Font color SeekBar listener
+        fontColorSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textView.setTextColor(Color.rgb(progress, progress, progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+    }
+}
+
+
+
+Q.2 Create First Activity to accept information like Student First Name, Middle Name, Last Name, Date of birth, Address, Email ID and display all information on Second Activity whenuser click on the Submit button.
+
+//  Layout XML for First Activity (activity_main.xml):
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/firstNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="First Name"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/middleNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/firstNameEditText"
+        android:hint="Middle Name"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/lastNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/middleNameEditText"
+        android:hint="Last Name"
+        android:inputType="text"/>
+
+    <!-- Add EditText fields for Date of Birth, Address, Email ID -->
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/emailEditText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Submit"/>
+</RelativeLayout>
+
+
+// Java Code for First Activity (MainActivity.java):
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText firstNameEditText, middleNameEditText, lastNameEditText, dobEditText, addressEditText, emailEditText;
+    private Button submitButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        firstNameEditText = findViewById(R.id.firstNameEditText);
+        middleNameEditText = findViewById(R.id.middleNameEditText);
+        lastNameEditText = findViewById(R.id.lastNameEditText);
+        dobEditText = findViewById(R.id.dobEditText);
+        addressEditText = findViewById(R.id.addressEditText);
+        emailEditText = findViewById(R.id.emailEditText);
+        submitButton = findViewById(R.id.submitButton);
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get the entered information
+                String firstName = firstNameEditText.getText().toString();
+                String middleName = middleNameEditText.getText().toString();
+                String lastName = lastNameEditText.getText().toString();
+                String dob = dobEditText.getText().toString();
+                String address = addressEditText.getText().toString();
+                String email = emailEditText.getText().toString();
+
+                // Start Second Activity and pass the information
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                intent.putExtra("firstName", firstName);
+                intent.putExtra("middleName", middleName);
+                intent.putExtra("lastName", lastName);
+                intent.putExtra("dob", dob);
+                intent.putExtra("address", address);
+                intent.putExtra("email", email);
+                startActivity(intent);
+            }
+        });
+    }
+}
+
+
+//  Layout XML for Second Activity (activity_second.xml):
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/infoTextView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="16dp"
+    android:textSize="18sp"/>
+
+
+//Java Code for Second Activity (SecondActivity.java):
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class SecondActivity extends AppCompatActivity {
+
+    private TextView infoTextView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_second);
+
+        infoTextView = findViewById(R.id.infoTextView);
+
+        // Retrieve the information passed from First Activity
+        Intent intent = getIntent();
+        String firstName = intent.getStringExtra("firstName");
+        String middleName = intent.getStringExtra("middleName");
+        String lastName = intent.getStringExtra("lastName");
+        String dob = intent.getStringExtra("dob");
+        String address = intent.getStringExtra("address");
+        String email = intent.getStringExtra("email");
+
+        // Display the information in the TextView
+        String info = "First Name: " + firstName + "\n" +
+                "Middle Name: " + middleName + "\n" +
+                "Last Name: " + lastName + "\n" +
+                "Date of Birth: " + dob + "\n" +
+                "Address: " + address + "\n" +
+                "Email ID: " + email;
+        infoTextView.setText(info);
+    }
+}
+
+----------------------------------------------------------slip 12-------------------------------------------------------------------------
+
+Q1.Create a Simple Application Which Send ―Hi‖ message from one activity to another withhelp of Button (Use Intent)
+
+// Layout XML for First Activity (activity_main.xml):
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/sendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Send Hi Message"/>
+</RelativeLayout>
+
+// Java Code for First Activity (MainActivity.java):
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button sendButton = findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Send "Hi" message to Second Activity
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                intent.putExtra("message", "Hi");
+                startActivity(intent);
+            }
+        });
+    }
+}
+
+//  Layout XML for Second Activity (activity_second.xml):
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/messageTextView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="16dp"
+    android:textSize="18sp"/>
+
+//  Java Code for Second Activity (SecondActivity.java):
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class SecondActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_second);
+
+        TextView messageTextView = findViewById(R.id.messageTextView);
+
+        // Retrieve the message passed from First Activity
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("message")) {
+            String message = intent.getStringExtra("message");
+            messageTextView.setText(message);
+        }
+    }
+}
+
+
+
+
+Q.2 Create an application to demonstrate date and time picker.
+
+// Layout XML (activity_main.xml):
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/datePickerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick Date"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"/>
+
+    <Button
+        android:id="@+id/timePickerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick Time"
+        android:layout_below="@id/datePickerButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/selectedDateTimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="20sp"
+        android:layout_below="@id/timePickerButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"/>
+
+</RelativeLayout>
+
+// Java Code (MainActivity.java):
+
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import android.widget.TimePicker;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Calendar;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView selectedDateTimeTextView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        selectedDateTimeTextView = findViewById(R.id.selectedDateTimeTextView);
+        Button datePickerButton = findViewById(R.id.datePickerButton);
+        Button timePickerButton = findViewById(R.id.timePickerButton);
+
+        datePickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+
+        timePickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTimePickerDialog();
+            }
+        });
+    }
+
+    private void showDatePickerDialog() {
+        // Get current date
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // Create a DatePickerDialog and show it
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        // Display the selected date
+                        String selectedDate = dayOfMonth + "/" + (month + 1) + "/" + year;
+                        selectedDateTimeTextView.setText(selectedDate);
+                    }
+                }, year, month, dayOfMonth);
+        datePickerDialog.show();
+    }
+
+    private void showTimePickerDialog() {
+        // Get current time
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        // Create a TimePickerDialog and show it
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        // Display the selected time
+                        String selectedTime = hourOfDay + ":" + minute;
+                        selectedDateTimeTextView.setText(selectedTime);
+                    }
+                }, hour, minute, true);
+        timePickerDialog.show();
+    }
+}
+
+---------------------------------------------------slip 13 --------------------------------------------------------------------------
+
+1 . Create following Vertical Scroll View Creation in Android.
+
+// Layout XML (activity_main.xml):
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Buttons from 4 to 10 -->
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button 4"
+            android:onClick="onButtonClick"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button 5"
+            android:onClick="onButtonClick"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button 6"
+            android:onClick="onButtonClick"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button 7"
+            android:onClick="onButtonClick"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button 8"
+            android:onClick="onButtonClick"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button 9"
+            android:onClick="onButtonClick"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button 10"
+            android:onClick="onButtonClick"/>
+            
+    </LinearLayout>
+
+</ScrollView>
+
+//Java Code (MainActivity.java):
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    // Method to handle button clicks
+    public void onButtonClick(View view) {
+        String buttonText = ((Button) view).getText().toString();
+        Toast.makeText(this, buttonText + " clicked", Toast.LENGTH_SHORT).show();
+    }
+}
+
+
+Q2. Write a program to search a specific location on Google Map. 
+
+// Layout XML (activity_main.xml):
+
+<Button
+    android:id="@+id/searchButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Search Location"
+    android:layout_gravity="center"/>
+
+//  Java Code (MainActivity.java):
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        findViewById(R.id.searchButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open Google Maps with search query
+                String location = "neo city wagholi"; 
+                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + location);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(mapIntent);
+                }
+            }
+        });
+    }
+}
+
+
+---------------------------------------------------------slip 14------------------------------------------------------------------------
+
+1.  Create a Simple Application which shows the Life Cycle of Activity. 
+
+
+// Define the layout for the activity (activity_main.xml):
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".MainActivity">
+
+    <!-- No need to add any UI components for this example -->
+
+</LinearLayout>
+
+
+// Implement the Java code for the activity (MainActivity.java):
+
+import android.os.Bundle;
+import android.util.Log;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Log.d("Lifecycle", "onCreate() called");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("Lifecycle", "onStart() called");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("Lifecycle", "onResume() called");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("Lifecycle", "onPause() called");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("Lifecycle", "onStop() called");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("Lifecycle", "onDestroy() called");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("Lifecycle", "onRestart() called");
+    }
+}
+
+
+
+Q2. Create an Android application to send email.
+
+// activity_main.xml
+
+<!-- activity_main.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/sendEmailButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send Email"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>
+
+
+// MainActivity.java
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button sendEmailButton = findViewById(R.id.sendEmailButton);
+        sendEmailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendEmail();
+            }
+        });
+    }
+
+    private void sendEmail() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("message/rfc822"); // Set MIME type for email
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[] {"recipient@example.com"});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Subject of Email");
+        intent.putExtra(Intent.EXTRA_TEXT, "Body of Email");
+        startActivity(Intent.createChooser(intent, "Send Email"));
+    }
+}
+
+// AndroidManifest.xml:
+
+
+<uses-permission android:name="android.permission.INTERNET" />
+
+
+--------------------------------------------------slip 15-----------------------------------------------------------------------
+Q1. Design following-add a border to an Android Layout
+
+// border_background.xml 
+
+<!-- border_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#FFFFFF" /> <!-- Background color -->
+    <stroke
+        android:width="2dp" <!-- Border width -->
+        android:color="#000000" /> <!-- Border color -->
+    <corners android:radius="8dp" /> <!-- Corner radius -->
+</shape>
+
+
+//activity_main.xml
+
+<!-- activity_main.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#3F51B5" <!-- Blue background color -->
+    android:padding="16dp"
+    android:gravity="center"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_background" <!-- Set border background -->
+        android:padding="16dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello World"
+            android:textColor="#FFFFFF" <!-- Text color -->
+            android:textSize="24sp" /> <!-- Text size -->
+    </LinearLayout>
+
+</RelativeLayout>
+
+
+Q2. Create simple application with Login Screen. On successful login, gives message go tonext Activity (Without Using Database). 
+
+<!--  MAIL : sujit@.com
+      Pass : sujit123 -->
+
+// activity_main.xml
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/passwordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:layout_below="@id/emailEditText"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:layout_below="@id/passwordEditText"/>
+
+</RelativeLayout>
+
+// activity_second.xml
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:text="Welcome to the Second Activity!"
+    android:gravity="center"
+    android:textSize="24sp"/>
+
+// MainActivity.java 
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText emailEditText, passwordEditText;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+        Button loginButton = findViewById(R.id.loginButton);
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = emailEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+                if (email.equals("sujit@.com") && password.equals("sujit123")) {
+                    // Login successful, go to the next activity
+                    startActivity(new Intent(MainActivity.this, SecondActivity.class));
+                } else {
+                    // Login failed, show a toast message
+                    Toast.makeText(MainActivity.this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+}
+
+
+// SecondActivity.java 
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class SecondActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_second);
+    }
+}
+
+
+--------------------------------------------------slip 16-------------------------------------------------------------------------
+
+Q1. Create an Android App, it reads the Students Details (Name, Surname, Class, Gender, Hobbies, Marks) and display the all information in another activity in table format on click ofSubmit button.
+
+// activity_main.xml
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <!-- Input fields for student details -->
+    <EditText
+        android:id="@+id/firstNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="First Name"
+        android:inputType="text"/>
+
+    <!-- Add other input fields for surname, class, gender, hobbies, and marks -->
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:layout_below="@id/marksEditText"
+        android:layout_marginTop="16dp"/>
+
+</RelativeLayout>
+
+
+// activity_display_details.xml
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/detailsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Student Details"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+    <TableLayout
+        android:id="@+id/detailsTableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
+
+
+// MainActivity.java:
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText firstNameEditText, lastNameEditText, classEditText, genderEditText, hobbiesEditText, marksEditText;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        firstNameEditText = findViewById(R.id.firstNameEditText);
+        // Initialize other EditText fields
+
+        Button submitButton = findViewById(R.id.submitButton);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitDetails();
+            }
+        });
+    }
+
+    private void submitDetails() {
+        // Get student details from EditText fields
+        String firstName = firstNameEditText.getText().toString();
+        // Get other details in a similar manner
+
+        // Pass student details to the next activity
+        Intent intent = new Intent(MainActivity.this, DisplayDetailsActivity.class);
+        intent.putExtra("firstName", firstName);
+        // Add other details as extras
+        startActivity(intent);
+    }
+}
+
+// DisplayDetailsActivity.java
+
+import android.os.Bundle;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class DisplayDetailsActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_display_details);
+
+        // Get student details from intent extras
+        Intent intent = getIntent();
+        String firstName = intent.getStringExtra("firstName");
+        // Get other details in a similar manner
+
+        // Display student details in a table
+        displayStudentDetails(firstName, lastName, class, gender, hobbies, marks);
+    }
+
+    private void displayStudentDetails(String firstName, String lastName, String class, String gender, String hobbies, String marks) {
+        TableLayout detailsTableLayout = findViewById(R.id.detailsTableLayout);
+
+        // Create a new row for each detail
+        TableRow row1 = new TableRow(this);
+        TextView label1 = new TextView(this);
+        label1.setText("First Name:");
+        TextView value1 = new TextView(this);
+        value1.setText(firstName);
+        row1.addView(label1);
+        row1.addView(value1);
+        detailsTableLayout.addView(row1);
+
+        // Create and add rows for other details
+    }
+}
+
+
+Q2. Create an Android Application that Demonstrate TimePicker and display Selected Time on TextView
+
+//activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:timePickerMode="spinner" />
+
+    <Button
+        android:id="@+id/btnSetTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/timePicker"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Set Time" />
+
+    <TextView
+        android:id="@+id/tvSelectedTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnSetTime"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Selected Time"
+        android:textSize="20sp" />
+
+</RelativeLayout>
+
+
+//MainActivity.java
+
+package com.example.timepickerdemo;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.TimePickerDialog;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.TimePicker;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    TimePicker timePicker;
+    Button btnSetTime;
+    TextView tvSelectedTime;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        timePicker = findViewById(R.id.timePicker);
+        btnSetTime = findViewById(R.id.btnSetTime);
+        tvSelectedTime = findViewById(R.id.tvSelectedTime);
+
+        // Set default time to current time
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        timePicker.setCurrentHour(hour);
+        timePicker.setCurrentMinute(minute);
+
+        // Set click listener for button
+        btnSetTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get selected hour and minute from TimePicker
+                int hour = timePicker.getCurrentHour();
+                int minute = timePicker.getCurrentMinute();
+
+                // Display selected time on TextView
+                String time = String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
+                tvSelectedTime.setText("Selected Time: " + time);
+            }
+        });
+    }
+}
+
+
+//Make sure to add necessary permissions to your AndroidManifest.xml if you haven't already:
+
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+
+----------------------------------------------slip 17----------------------------------------------------------------
+
+Q1. Write an android code to make phone call using Intent.
+
+//activity_main.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/call_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Call"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>
+
+
+// MainActivity.java:
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button callButton = findViewById(R.id.call_button);
+
+        callButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Phone number to dial
+                String phoneNumber = "1234567890";
+
+                // Create an intent with ACTION_CALL action
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+
+                // Set the phone number to dial
+                callIntent.setData(Uri.parse("tel:" + phoneNumber));
+
+                // Check if the device can make calls
+                if (callIntent.resolveActivity(getPackageManager()) != null) {
+                    // Start the activity to initiate the phone call
+                    startActivity(callIntent);
+                } else {
+                    // Display a message if the device cannot make calls
+                    Toast.makeText(MainActivity.this, "Your device cannot make calls.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+}
+
+
+
+// Make sure to add the necessary permissions in the AndroidManifest.xml file:
+
+<uses-permission android:name="android.permission.CALL_PHONE" />
+
+
+
+
+Q2. Construct an Android Application to accept a number and calculate Factorial and Sum of Digits of a given number using Context Menu.
+
+// activity_main.xml:
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editTextNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter a number"
+        android:inputType="number"/>
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextNumber"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Calculate"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonCalculate"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text=""
+        android:textSize="18sp"/>
+
+</RelativeLayout>
+
+
+// MainActivity.java:
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+
+    EditText editTextNumber;
+    TextView textViewResult;
+    Button buttonCalculate;
+    int number;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextNumber = findViewById(R.id.editTextNumber);
+        textViewResult = findViewById(R.id.textViewResult);
+        buttonCalculate = findViewById(R.id.buttonCalculate);
+
+        buttonCalculate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String input = editTextNumber.getText().toString();
+                if (!input.isEmpty()) {
+                    number = Integer.parseInt(input);
+                    registerForContextMenu(textViewResult);
+                    openContextMenu(textViewResult);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("Choose an operation");
+        menu.add(0, v.getId(), 0, "Calculate Factorial");
+        menu.add(0, v.getId(), 0, "Calculate Sum of Digits");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (item.getTitle().equals("Calculate Factorial")) {
+            textViewResult.setText("Factorial of " + number + " = " + factorial(number));
+            return true;
+        } else if (item.getTitle().equals("Calculate Sum of Digits")) {
+            textViewResult.setText("Sum of digits of " + number + " = " + sumOfDigits(number));
+            return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    // Method to calculate factorial
+    private int factorial(int n) {
+        int fact = 1;
+        for (int i = 1; i <= n; i++) {
+            fact *= i;
+        }
+        return fact;
+    }
+
+    // Method to calculate sum of digits
+    private int sumOfDigits(int n) {
+        int sum = 0;
+        while (n > 0) {
+            sum += n % 10;
+            n /= 10;
+        }
+        return sum;
+    }
+}
+
+
+-------------------------------------------------slip 18---------------------------------------------------------------
+
+Q1. Create an Android Application that Demonstrate Alert Dialog Box
+
+// activity_main.xml:
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btnShowDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Dialog"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>
+
+
+// MainActivity.java:
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button btnShowDialog = findViewById(R.id.btnShowDialog);
+
+        btnShowDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create AlertDialog
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                alertDialogBuilder.setTitle("Alert Dialog");
+                alertDialogBuilder.setMessage("This is an example of AlertDialog box.");
+
+                // Positive button
+                alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Close the dialog
+                        dialog.dismiss();
+                    }
+                });
+
+                // Create and show AlertDialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+        });
+    }
+}
+
+
+Q2. Create an Android Application that produce Notification.
+
+// activity_main.xml:
+
+<!-- activity_main.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+</LinearLayout>
+
+
+// MainActivity.java:
+
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.os.Build;
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+
+public class MainActivity extends AppCompatActivity {
+
+    // Notification channel ID. It's required for Android Oreo (API 26) and higher.
+    private static final String CHANNEL_ID = "example_notification_channel";
+    private static final int NOTIFICATION_ID = 101;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        createNotificationChannel();
+
+        // Create and display the notification
+        showNotification();
+    }
+
+    private void createNotificationChannel() {
+        // Check if the Android version is Oreo or higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create the NotificationChannel
+            CharSequence name = "Example Notification Channel";
+            String description = "This is an example notification channel.";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+
+            // Register the channel with the system
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void showNotification() {
+        // Create the notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("Example Notification")
+                .setContentText("This is a sample notification.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        // Show the notification
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+    }
+}
+
+
+----------------------------------------------------slip 19-------------------------------------------------------
+
+Q1. Create an Android Application that on/off the bulb using Toggle Button.
+
+// activity_main.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textOn="ON"
+        android:textOff="OFF" />
+
+</RelativeLayout>
+
+
+// MainActivity.java:
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.CompoundButton;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+public class MainActivity extends AppCompatActivity {
+
+    ToggleButton toggleButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        toggleButton = findViewById(R.id.toggleButton);
+
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // Bulb is turned ON
+                    turnOnBulb();
+                } else {
+                    // Bulb is turned OFF
+                    turnOffBulb();
+                }
+            }
+        });
+    }
+
+    private void turnOnBulb() {
+        // Logic to turn on the bulb
+        Toast.makeText(this, "Bulb is turned ON", Toast.LENGTH_SHORT).show();
+    }
+
+    private void turnOffBulb() {
+        // Logic to turn off the bulb
+        Toast.makeText(this, "Bulb is turned OFF", Toast.LENGTH_SHORT).show();
+    }
+}
+
+
+
+Q2. Create application to send SMS message. After sending message display delivery report of message.
+
+
+// AndroidManifest.xml:
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.smssender">
+
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+
+
+// activity_main.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editTextPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter phone number"
+        android:inputType="phone" />
+
+    <EditText
+        android:id="@+id/editTextMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextPhoneNumber"
+        android:layout_marginTop="16dp"
+        android:hint="Enter message" />
+
+    <Button
+        android:id="@+id/buttonSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextMessage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Send" />
+
+</RelativeLayout>
+
+
+// MainActivity.java: 
+
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.telephony.SmsManager;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    EditText editTextPhoneNumber, editTextMessage;
+    Button buttonSend;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
+        editTextMessage = findViewById(R.id.editTextMessage);
+        buttonSend = findViewById(R.id.buttonSend);
+
+        buttonSend.setOnClickListener(v -> sendMessage());
+    }
+
+    private void sendMessage() {
+        String phoneNumber = editTextPhoneNumber.getText().toString().trim();
+        String message = editTextMessage.getText().toString().trim();
+
+        if (phoneNumber.isEmpty() || message.isEmpty()) {
+            Toast.makeText(this, "Please enter phone number and message", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        PendingIntent sentPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent("SMS_SENT"), 0);
+        PendingIntent deliveredPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent("SMS_DELIVERED"), 0);
+
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                switch (getResultCode()) {
+                    case RESULT_OK:
+                        Toast.makeText(MainActivity.this, "SMS sent", Toast.LENGTH_SHORT).show();
+                        break;
+                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                        Toast.makeText(MainActivity.this, "Generic failure", Toast.LENGTH_SHORT).show();
+                        break;
+                    case SmsManager.RESULT_ERROR_NO_SERVICE:
+                        Toast.makeText(MainActivity.this, "No service", Toast.LENGTH_SHORT).show();
+                        break;
+                    case SmsManager.RESULT_ERROR_NULL_PDU:
+                        Toast.makeText(MainActivity.this, "Null PDU", Toast.LENGTH_SHORT).show();
+                        break;
+                    case SmsManager.RESULT_ERROR_RADIO_OFF:
+                        Toast.makeText(MainActivity.this, "Radio off", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        }, new IntentFilter("SMS_SENT"));
+
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                switch (getResultCode()) {
+                    case RESULT_OK:
+                        Toast.makeText(MainActivity.this, "SMS delivered", Toast.LENGTH_SHORT).show();
+                        break;
+                    case RESULT_CANCELED:
+                        Toast.makeText(MainActivity.this, "SMS not delivered", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        }, new IntentFilter("SMS_DELIVERED"));
+
+        SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage(phoneNumber, null, message, sentPendingIntent, deliveredPendingIntent);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(new BroadcastReceiver() {
+        });
+    }
+}
+
+
+---------------------------------------------------slip 20 ----------------------------------------------------------------
+
+Q1. Create Android Program to Change the Image on the Screen
+
+// activity_main.xml:
+
+<!-- activity_main.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/image1" />
+
+    <Button
+        android:id="@+id/buttonChangeImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Change Image" />
+
+</RelativeLayout>
+
+
+// MainActivity.java:
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+
+public class MainActivity extends AppCompatActivity {
+
+    private ImageView imageView;
+    private Button buttonChangeImage;
+    private int currentImageIndex = 1; // Initial index of the image
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        imageView = findViewById(R.id.imageView);
+        buttonChangeImage = findViewById(R.id.buttonChangeImage);
+
+        buttonChangeImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeImage();
+            }
+        });
+    }
+
+    private void changeImage() {
+        // Increment the current image index
+        currentImageIndex++;
+
+        // Check if the current image index is within the range of available images
+        if (currentImageIndex > 3) {
+            currentImageIndex = 1; // Reset to the first image
+        }
+
+        // Set the image resource based on the current image index
+        switch (currentImageIndex) {
+            case 1:
+                imageView.setImageResource(R.drawable.image1);
+                break;
+            case 2:
+                imageView.setImageResource(R.drawable.image2);
+                break;
+            case 3:
+                imageView.setImageResource(R.drawable.image3);
+                break;
+        }
+    }
+}
+
+
+Q2. Demonstrate Options Menu, Context Menu and Popup Menu in android.
+
+// activity_main.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@color/light_gray"
+        android:text="Long press to change color"
+        android:padding="16dp"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="Popup Menu" />
+
+</RelativeLayout>
+
+
+// MainActivity.java:
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView textView;
+    private Button button;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textView = findViewById(R.id.textView);
+        button = findViewById(R.id.button);
+
+        // Register TextView for Context Menu
+        registerForContextMenu(textView);
+
+        // Register Button for Popup Menu
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupMenu(v);
+            }
+        });
+    }
+
+    // Options Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_settings:
+                Toast.makeText(this, "Settings clicked", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_about:
+                Toast.makeText(this, "About clicked", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // Context Menu
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_red:
+                textView.setTextColor(Color.RED);
+                return true;
+            case R.id.action_green:
+                textView.setTextColor(Color.GREEN);
+                return true;
+            case R.id.action_blue:
+                textView.setTextColor(Color.BLUE);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    // Popup Menu
+    private void showPopupMenu(View v) {
+        android.widget.PopupMenu popupMenu = new android.widget.PopupMenu(this, v);
+        popupMenu.inflate(R.menu.popup_menu);
+
+        popupMenu.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_yellow:
+                        button.setBackgroundColor(Color.YELLOW);
+                        return true;
+                    case R.id.action_gray:
+                        button.setBackgroundColor(Color.GRAY);
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+
+        popupMenu.show();
+    }
+}
+
+
+// res/menu/options_menu.xml:
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_settings"
+        android:title="Settings" />
+    <item
+        android:id="@+id/action_about"
+        android:title="About" />
+</menu>
+
+// res/menu/context_menu.xml:
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_red"
+            android:title="Red" />
+        <item
+            android:id="@+id/action_green"
+            android:title="Green" />
+        <item
+            android:id="@+id/action_blue"
+            android:title="Blue" />
+    </group>
+</menu>
+
+
+// res/menu/popup_menu.xml:
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_yellow"
+        android:title="Yellow" />
+    <item
+        android:id="@+id/action_gray"
+        android:title="Gray" />
+</menu>
+
+
+
+
+
+
+OR  
+
+
+Q2. Demonstrate Array Adapter using List View to display list of Country. 
+
+// res/layout/activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>
+
+
+// res/layout/list_item_country.xml
+
+<!-- res/layout/list_item_country.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textViewCountry"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:textSize="18sp" />
+
+// res/values/strings.xml
+
+<!-- res/values/strings.xml -->
+<resources>
+    <string name="app_name">CountryList</string>
+    <string-array name="countries_array">
+        <item>United States</item>
+        <item>Canada</item>
+        <item>United Kingdom</item>
+        <item>Australia</item>
+        <item>Germany</item>
+        <!-- Add more countries as needed -->
+    </string-array>
+</resources>
+
+
+// MainActivity.java
+
+// MainActivity.java
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Get the ListView reference
+        ListView listView = findViewById(R.id.listView);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.countries_array,
+                android.R.layout.simple_list_item_1
+        );
+
+        // Set the adapter for the ListView
+        listView.setAdapter(adapter);
+    }
+}
+
+
+
+
+
+
+
+
